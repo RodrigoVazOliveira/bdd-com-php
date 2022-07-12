@@ -1,0 +1,19 @@
+{
+    "name": "thomas/arquitetura",
+    "description": "Arquitetura de software usando PHP",
+    "autoload": {
+        "psr-4": {
+            "Thomas\\Arquitetura\\": "src/",
+            "Tests\\": "tests/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Rodrigo Vaz De Oliveira",
+            "email": "rodrigovazdeoliveira@gmail.com"
+        }
+    ],
+    "require": {
+        "phpunit/phpunit": "^9.5"
+    }
+}
