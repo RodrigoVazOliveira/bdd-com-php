@@ -20,6 +20,7 @@ class RegisterStudantTest extends TestCase {
 
         self::assertNotNull($studantSaved);
         self::assertEquals('Rodrigo Vaz', $studantSaved->getName());
+        self::assertCount(0, $studantSaved->getTelephones());
     }
 
 }
