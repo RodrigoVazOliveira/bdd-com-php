@@ -28,18 +28,6 @@ class StudantRepositoryPDO implements StudantRepository {
         $this->saveTelephones($telephones, $studant->getCpf());
     }
 
-    private function saveTelephones(array $telephones, string $cpf) {
-        $sql = 'INSERT INTO telephones VALUES (:ddd, :number, :cpf_studant);';
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->bindValue(':cpf_studant', $cpf, \PDO::PARAM_STR);
-
-        foreach ($telephones as $telephone) {
-            $stmt->bindValue(':ddd', $telephone->getDdi(), \PDO::PARAM_STR);
-            $stmt->bindValue(':number', $telephone->getNumber(), \PDO::PARAM_STR);
-            $stmt->execute();
-        }
-    }
-
     public function findAll(): array {
         $sql = 'SELECT s.cpf, s.name, s.email, t.ddi as ddi, t.number as number '
                 . 'FROM studants s, telephones t WHERE t.cpf_studant = s.cpf';
@@ -49,6 +37,38 @@ class StudantRepositoryPDO implements StudantRepository {
         $studants = $this->mountObjectForFindAll($resultSet);
 
         return array_values($studants);
+    }
+
+    public function addTelephone(Studant $studant): void {
+        $this->saveTelephones($studant->getTelephones(), $studant->getCpf());
+    }
+
+    public function findByCPF(CPF $cpf): Studant {
+        $sql = 'SELECT s.cpf, s.name, s.email, t.ddi as ddi, t.number as number '
+                . 'FROM studants s, telephones t WHERE t.cpf_studant = s.cpf AND s.cpf = :cpf';
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->bindValue(':cpf', $cpf->__toString(), \PDO::PARAM_STR);
+        $resultSet = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+        if (count($resultSet) === 0) {
+            throw new StudantNotFound($cpf);
+        }
+
+        $studant = $this->MountStudant($resultSet);
+
+        return $studant;
+    }
+
+    private function saveTelephones(array $telephones, string $cpf): void {
+        $sql = 'INSERT INTO telephones VALUES (:ddd, :number, :cpf_studant);';
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->bindValue(':cpf_studant', $cpf, \PDO::PARAM_STR);
+
+        foreach ($telephones as $telephone) {
+            $stmt->bindValue(':ddd', $telephone->getDdi(), \PDO::PARAM_STR);
+            $stmt->bindValue(':number', $telephone->getNumber(), \PDO::PARAM_STR);
+            $stmt->execute();
+        }
     }
 
     private function mountObjectForFindAll(array $resultSet): array {
@@ -68,22 +88,6 @@ class StudantRepositoryPDO implements StudantRepository {
         }
 
         return $studants;
-    }
-
-    public function findByCPF(CPF $cpf): Studant {
-        $sql = 'SELECT s.cpf, s.name, s.email, t.ddi as ddi, t.number as number '
-                . 'FROM studants s, telephones t WHERE t.cpf_studant = s.cpf AND s.cpf = :cpf';
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->bindValue(':cpf', $cpf->__toString(), \PDO::PARAM_STR);
-        $resultSet = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-
-        if (count($resultSet) === 0) {
-            throw new StudantNotFound($cpf);
-        }
-
-        $studant = $this->MountStudant($resultSet);
-
-        return $studant;
     }
 
     private function MountStudant(array $resultSet): Studant {

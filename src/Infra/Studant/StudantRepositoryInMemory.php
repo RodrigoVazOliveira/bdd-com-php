@@ -32,4 +32,20 @@ class StudantRepositoryInMemory implements StudantRepository {
         return $results[0];
     }
 
+    public function addTelephone(Studant $studant): void {
+        $studantExists = array_filter($this->studants, function ($studantActual) {
+            return $studantActual->getCpf() == $studant->getCpf();
+        });
+
+        if ($studantExists == null) {
+            throw new \InvalidArgumentException('O estudante informado nao existe');
+        }
+
+        $telephones = $studant->getTelephones();
+
+        foreach ($telephones as $telephone) {
+            $studantExists->addTelephone($telephone->getDdi(), $telephone->getNumber());
+        }
+    }
+
 }

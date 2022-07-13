@@ -9,4 +9,6 @@ interface StudantRepository {
     public function findByCPF(CPF $cpf): Studant;
 
     public function findAll(): array;
+
+    public function addTelephone(Studant $studant): void;
 }
