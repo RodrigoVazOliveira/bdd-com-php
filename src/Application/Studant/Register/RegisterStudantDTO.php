@@ -3,6 +3,7 @@
 namespace Thomas\Arquitetura\Application\Studant\Register;
 
 use Thomas\Arquitetura\Domain\Studant\Studant;
+use Thomas\Arquitetura\Domain\Studant\StudantBuilder;
 
 class RegisterStudantDTO {
 

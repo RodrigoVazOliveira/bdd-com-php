@@ -7,7 +7,7 @@ class StudantBuilder {
     private Email $email;
     private string $name;
     private CPF $cpf;
-    private array $telephones;
+    private array $telephones = [];
 
     public function withCpf(string $cpf): StudantBuilder {
         $this->cpf = new CPF($cpf);
