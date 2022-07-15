@@ -17,23 +17,31 @@ class Studant {
     }
 
     public function addTelephone(string $ddi, string $number): void {
+        $this->verifyLimitTelephone();
         $this->telephones[] = new Telephone($ddi, $number);
     }
 
-    function getCpf(): CPF {
+    public function getCpf(): CPF {
         return $this->cpf;
     }
 
-    function getName(): string {
+    public function getName(): string {
         return $this->name;
     }
 
-    function getEmail(): Email {
+    public function getEmail(): Email {
         return $this->email;
     }
 
-    function getTelephones(): array {
+    public function getTelephones(): array {
         return $this->telephones;
+    }
+
+    private function verifyLimitTelephone(): void {
+        $sizeTelephone = count($this->telephones);
+        if ($sizeTelephone === 2) {
+            throw new TelephoneLimiteExcededException('O limite de telephone e de apenas 2 por aluno');
+        }
     }
 
 }
